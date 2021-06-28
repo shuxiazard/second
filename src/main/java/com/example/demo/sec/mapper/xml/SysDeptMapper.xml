@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.sec.mapper.SysDeptMapper">
+    <resultMap id="departTree" type="com.example.demo.sec.entity.DepartTree">
+        <id property="deptId" column="dept_id"/>
+        <result property="title" column="dept_name"/>
+        <result property="parentId" column="parent_id"/>
+        <collection property="children" ofType="com.example.demo.sec.entity.DepartTree" column="ancestors" />
+    </resultMap>
+
+    <select id="getDepartRoot" resultMap="departTree">
+        SELECT dept_id,parent_id,dept_name,ancestors FROM sys_dept where parent_id=0;
+    </select>
+
+    <select id="getChildren" resultMap="departTree">
+        SELECT dept_id,parent_id,dept_name,ancestors FROM sys_dept
+        WHERE parent_id=#{dept_id}
+    </select>
+
+</mapper>
