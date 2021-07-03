@@ -5,9 +5,9 @@ import com.example.demo.entity.AdminDetails;
 import com.example.demo.entity.AuthRole;
 import com.example.demo.sec.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -17,6 +17,7 @@ import java.util.List;
  * @author shuxia
  * @date 7/3/2021
  */
+@Service
 public class MyUserDetailServiceImpl  implements UserDetailsService {
     @Autowired
     SysUserServiceImpl sysUserService;
