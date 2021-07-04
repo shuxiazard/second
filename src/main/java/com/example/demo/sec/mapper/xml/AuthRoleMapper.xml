@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.sec.mapper.AuthRoleMapper">
+
+<select id="getRoleList" resultType="com.example.demo.entity.AuthRole">
+    SELECT r.role_id,r.role_name,r.role_key
+    FROM sys_role as r ,sys_user_role as ur
+    WHERE #{userId}=ur.user_id
+      AND r.role_id=ur.role_id
+
+</select>
+</mapper>
