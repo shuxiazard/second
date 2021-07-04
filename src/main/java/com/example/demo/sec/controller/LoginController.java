@@ -6,7 +6,10 @@ import com.example.demo.entity.AuthRole;
 import com.example.demo.sec.entity.SysUser;
 import com.example.demo.sec.service.impl.SysUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< HEAD
 import org.springframework.beans.factory.annotation.Value;
+=======
+>>>>>>> main
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,14 +34,18 @@ public class LoginController {
   @Autowired
   SysUserServiceImpl sysUserService;
   BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
+<<<<<<< HEAD
   @Value("${jwt.tokenHeader}")
   private String tokenHeader;
   @Value("${jwt.tokenHead}")
   private String tokenHead;
+=======
+>>>>>>> main
 
   @PostMapping("/index")
     public String getIndex(SysUser sysUser,Model model){
     final String token = sysUserService.login(sysUser.getLoginName(), sysUser.getPassword());
+<<<<<<< HEAD
 
     model.addAttribute("msg","用户名或密码错误");
     final Map<String, String> map = new HashMap<>();
@@ -55,6 +62,20 @@ public class LoginController {
     model.addAttribute("loginName",principal);
     System.out.println(principal);
     System.out.println(SecurityContextHolder.getContext().getAuthentication());
+=======
+    if (token==null){
+      model.addAttribute("msg","用户名或密码错误");
+    }
+    model.addAttribute("loginName",sysUser.getLoginName());
+    System.out.println(token);
+    System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+    return "redirect:/index";
+  }
+  @GetMapping("/index")
+  @PreAuthorize("hasAuthority('admin')")
+  public String getIndex( Model model) {
+
+>>>>>>> main
     return "index";
   }
 
