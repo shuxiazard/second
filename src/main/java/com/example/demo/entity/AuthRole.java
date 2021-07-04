@@ -12,7 +12,7 @@ import java.math.BigInteger;
  */
 @Data
 public class AuthRole {
-    private Long userId;
     private Long roleId;
     private String roleName;
+    private String roleKey;
 }

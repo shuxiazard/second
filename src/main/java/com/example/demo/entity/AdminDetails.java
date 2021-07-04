@@ -5,6 +5,7 @@ import com.example.demo.sec.entity.SysUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,8 +32,8 @@ public class AdminDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         //返回当前用户的权限
         return permissionList.stream()
-                .filter(permission -> permission.getRoleName()!=null)
-                .map(permission ->new SimpleGrantedAuthority(permission.getRoleName()))
+                .filter(permission -> permission.getRoleKey()!=null)
+                .map(permission ->new SimpleGrantedAuthority(permission.getRoleKey()))
                 .collect(Collectors.toList());
     }
 

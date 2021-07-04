@@ -9,14 +9,13 @@
 <body>
 <div id="login">
     <h1>Login</h1>
-    <form method="post" th:action="@{/index}" >
+    <form  method="post" th:action="@{/index}">
         <p style="color: red;text-align: center" th:text="${msg}"> </p>
         <input type="text" required="required" placeholder="用户名" name="loginName"></input>
         <input type="password" required="required" placeholder="密码" name="password"></input>
-        <button class="but" type="submit">登录</button>
+        <button class="but login" type="submit" >登录</button>
     </form>
     <button class="but" type="button"><a th:href="@{/register}">注册</a></button>
 </div>
-
 </body>
 </html>

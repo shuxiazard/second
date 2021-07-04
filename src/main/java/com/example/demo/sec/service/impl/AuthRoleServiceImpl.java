@@ -19,7 +19,8 @@ public class AuthRoleServiceImpl implements IAuthRoleService {
     @Autowired
     AuthRoleMapper authRoleMapper;
     @Override
-    public List<AuthRole> getRoleList(Long usrId) {
-        return authRoleMapper.getRoleList(usrId);
+    public List<AuthRole> getRoleList(Long userId) {
+        final List<AuthRole> roleList = authRoleMapper.getRoleList(userId);
+        return roleList;
     }
 }
