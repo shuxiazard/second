@@ -1,5 +1,6 @@
 package com.example.demo.sec.service.impl;
 
+import com.example.demo.common.utils.JwtUtils;
 import com.example.demo.entity.AdminDetails;
 import com.example.demo.sec.entity.SysUser;
 import com.example.demo.sec.mapper.SysUserMapper;
@@ -23,20 +24,25 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
-   @Autowired
- MyUserDetailServiceImpl myUserDetailService;
+    @Autowired
+    MyUserDetailServiceImpl myUserDetailService;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    JwtUtils jwtUtils;
     @Override
     public String login(String loginName, String password) {
+        String token=null;
         final AdminDetails userDetails = myUserDetailService.loadUserByUsername(loginName);
         final boolean matches = passwordEncoder.matches(password, userDetails.getPassword());
-        if (matches){
+        if (matches) {
             final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
             final SecurityContext emptyContext = SecurityContextHolder.createEmptyContext();
             emptyContext.setAuthentication(authentication);
             SecurityContextHolder.setContext(emptyContext);
-            return loginName;
+            //生成token
+          token= jwtUtils.generalToken(userDetails.getUsername());
+
         }
-        return null;
+        return token;
     }
 }

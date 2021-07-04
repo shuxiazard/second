@@ -6,13 +6,19 @@ import com.example.demo.entity.AuthRole;
 import com.example.demo.sec.entity.SysUser;
 import com.example.demo.sec.service.impl.SysUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * LoginController
@@ -25,14 +31,31 @@ public class LoginController {
   @Autowired
   SysUserServiceImpl sysUserService;
   BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
+  @Value("${jwt.tokenHeader}")
+  private String tokenHeader;
+  @Value("${jwt.tokenHead}")
+  private String tokenHead;
+
   @PostMapping("/index")
     public String getIndex(SysUser sysUser,Model model){
-    final String user = sysUserService.login(sysUser.getLoginName(), sysUser.getPassword());
-    if (user!=null){
-      return "redirect:/index";
-    }
+    final String token = sysUserService.login(sysUser.getLoginName(), sysUser.getPassword());
+
     model.addAttribute("msg","用户名或密码错误");
-      return "login";
+    final Map<String, String> map = new HashMap<>();
+    map.put("token", token);
+    map.put("tokenHead", tokenHead);
+    map.put("tokenHeader",tokenHeader);
+    model.addAllAttributes(map);
+    System.out.println(token);
+      return "redirect:index";
+  }
+
+  @GetMapping("/index")
+  public String getIndex( Principal principal,Model model) {
+    model.addAttribute("loginName",principal);
+    System.out.println(principal);
+    System.out.println(SecurityContextHolder.getContext().getAuthentication());
+    return "index";
   }
 
   @GetMapping("/register")
