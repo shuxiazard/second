@@ -1,10 +1,7 @@
 package com.example.demo.sec.service.impl;
 
-<<<<<<< HEAD
-import com.example.demo.common.utils.JwtUtils;
-=======
+
 import com.example.demo.component.utils.JwtUtils;
->>>>>>> main
 import com.example.demo.entity.AdminDetails;
 import com.example.demo.sec.entity.SysUser;
 import com.example.demo.sec.mapper.SysUserMapper;
@@ -29,11 +26,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
-<<<<<<< HEAD
-    @Autowired
-=======
+
  @Autowired
->>>>>>> main
     MyUserDetailServiceImpl myUserDetailService;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Autowired
@@ -43,16 +37,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         String token=null;
         final AdminDetails userDetails = myUserDetailService.loadUserByUsername(loginName);
         final boolean matches = passwordEncoder.matches(password, userDetails.getPassword());
-<<<<<<< HEAD
-        if (matches) {
-            final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
-            final SecurityContext emptyContext = SecurityContextHolder.createEmptyContext();
-            emptyContext.setAuthentication(authentication);
-            SecurityContextHolder.setContext(emptyContext);
-            //生成token
-          token= jwtUtils.generalToken(userDetails.getUsername());
-
-=======
         if (matches){
             final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             final SecurityContext emptyContext = SecurityContextHolder.createEmptyContext();
@@ -61,7 +45,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
            token=jwtUtils.generalToken(userDetails.getUsername());
         } else {
             throw new BadCredentialsException("密码或用户名错误");
->>>>>>> main
         }
         return token;
     }
