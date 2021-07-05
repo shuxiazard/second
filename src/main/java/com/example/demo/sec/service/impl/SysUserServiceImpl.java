@@ -1,5 +1,6 @@
 package com.example.demo.sec.service.impl;
 
+
 import com.example.demo.component.utils.JwtUtils;
 import com.example.demo.entity.AdminDetails;
 import com.example.demo.sec.entity.SysUser;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
+
  @Autowired
     MyUserDetailServiceImpl myUserDetailService;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,9 +37,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login","/register")
+                .antMatchers("/login", "/register", "/getAuthCode", "/verifyAuthCode")
                 .permitAll()
-                .antMatchers(HttpMethod.POST,"/index")
+                .antMatchers(HttpMethod.POST, "/index")
                 .permitAll()
                 .antMatchers("/user/**")
                 .hasAuthority("admin")
@@ -48,9 +47,15 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf()
                 .disable();
-               /* 关闭session会使principal会为空，使用token就是替代session，结果报错，未知原因*/
-               //.sessionManagement()
-               // .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        //.sessionManagement()
+        // .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.formLogin()
+                .loginPage("/login")
+                .permitAll()
+                .and()
+                .logout()
+                .logoutSuccessUrl("/login")
+                .permitAll();
 
         // 禁用缓存
         http.headers().cacheControl();
@@ -74,7 +79,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public JwtFilter jwtFilter(){return new JwtFilter();}
+    public JwtFilter jwtFilter() {
+        return new JwtFilter();
+    }
 
     @Override
     protected AuthenticationManager authenticationManager() throws Exception {

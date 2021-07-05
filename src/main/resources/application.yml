@@ -3,3 +3,24 @@ jwt:
   expired: 604800 #JWT的超期限时间(60*60*24)
   tokenHead: Bearer
   secretKey: shuxia
+
+spring:
+  redis:
+    host:  #redis地址
+    database: 0 # Redis数据库索引（默认为0）
+    port: 6379 # Redis服务器连接端口
+    password:  #默认空
+    timeout: 1000ms # 连接超时时间
+    lettuce:
+      pool:
+        max-active: 8 # 连接池最大连接数
+        max-idle: 8 # 连接池最大空闲连接数
+        min-idle: 0 # 连接池最小空闲连接数
+        max-wait: -1ms # 连接池最大阻塞等
+
+redis:
+  key:
+    prefix:
+      authCode: "authCode:"
+    expire:
+      authCode: 120 # 验证码超期时间
