@@ -17,10 +17,15 @@ import java.util.concurrent.TimeUnit;
 public class RedisServiceImpl implements IRedisService {
     @Autowired
     RedisTemplate<String, String> redisTemplate;
-
     @Override
     public void set(String key, String value) {
         redisTemplate.opsForValue().set(key, value);
+    }
+    @Override
+    public void set(String key, String value,Long expire) {
+
+        redisTemplate.opsForValue().set(key, value);
+        redisTemplate.expire(key,expire,TimeUnit.MINUTES);
     }
 
     @Override
@@ -43,5 +48,7 @@ public class RedisServiceImpl implements IRedisService {
         final String s = redisTemplate.opsForValue().get(key);
         return s == null;
     }
+
+
 
 }

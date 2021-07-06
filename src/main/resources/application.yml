@@ -1,3 +1,4 @@
+
 jwt:
   tokenHeader: Authorization #JWT存储的请求头
   expired: 604800 #JWT的超期限时间(60*60*24)
@@ -24,3 +25,7 @@ redis:
       authCode: "authCode:"
     expire:
       authCode: 120 # 验证码超期时间
+    count:
+      authCode: "count"
+server:
+  port: 808

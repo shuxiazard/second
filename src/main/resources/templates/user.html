@@ -109,9 +109,9 @@
 </div>
 <script src="/assets/dist/js/jquery.min.js"></script>
 <script src="/assets/dist/js/layui.js"></script>
-<script src="/assets/dist/js/css/modules/layer/layer.js"></script>
+<script src="/assets/dist/js/layer/layer.js"></script>
 <script th:inline="javascript">
-    var data1 = [[${departs}]]
+    var data1 = [[${depart}]]
     //JS
     layui.use(['element', 'layer', 'util'], function () {
         var element = layui.element
@@ -142,6 +142,7 @@
     //部门树型菜单
     layui.use(['tree', 'util'], function () {
         var tree = layui.tree
+
         tree.render({
             elem: '#tree' //默认是点击节点可进行收缩
             , data: data1
@@ -154,6 +155,7 @@
                 }
             },
         });
+        //默认加载全部
         userTable(-1);
     });
 
@@ -182,7 +184,7 @@
                     [
                         {type: 'checkbox', fixed: 'left'}
                         , {field: 'userId', width: 90, title: 'ID', fixed: 'left', unresize: true, sort: true}
-                       ,{field: 'deptId',width: 90,title: '部门ID'}
+                        , {field: 'deptId', width: 90, title: '部门ID'}
                         , {field: 'userName', title: '用户名', width: 90}
                         , {field: 'loginName', title: '登录名', width: 90}
                         , {
@@ -222,23 +224,24 @@
             });
 
             //打开添加页面
-            function addUser(){
+            function addUser() {
                 layer.open({
                     type: 1,
                     title: '添加用户',
                     content: $("#saveDiv"),
                     area: ['800px', '400px'],
-                    success:function() {
+                    success: function () {
                     },
                     yes: function () {
                         layer.closeAll();
                     }
                 });
             }
+
             //监听行工具事件
 
             table.on('tool(user)', function (obj) {
-               var data = obj.data;
+                var data = obj.data;
                 if (obj.event === 'del') {
                     layer.confirm('真的删除行么', function (index) {
                         deleteUser(data.userId);
@@ -259,18 +262,19 @@
                     url: "delete"
                     , type: "post"
                     , async: false
-                    ,data:{userId:data}
+                    , data: {userId: data}
                     , success: function (result) {
-                        if (result){
+                        if (result) {
                             layer.alert("删除成功"
                             )
-                        }else{
+                        } else {
                             layer.alert("删除失败")
                         }
                         return false;
                     }
                 })
             }
+
             //打开修改页面
             function openUpdateUser(data) {
                 layer.open({
@@ -278,7 +282,7 @@
                     title: '修改用户',
                     content: $("#updateDiv"),
                     area: ['800px', '400px'],
-                    success:function() {
+                    success: function () {
                         form.val("editForm", data)
                     },
                     yes: function () {
@@ -288,57 +292,57 @@
             }
 
             //监听提交
-            form.on('submit(submitEdit)', function(data){
-             editUser(data.field)
+            form.on('submit(submitEdit)', function (data) {
+                editUser(data.field)
             });
-            form.on('submit(submitAdd)', function(data){
+            form.on('submit(submitAdd)', function (data) {
                 setUser(data.field)
             });
 
 
+            //修改返回
+            function editUser(data) {
+                $.ajax({
+                    url: "edit"
+                    , type: "post"
+                    , async: false
+                    , dataType: "json",
+                    data: data
+                    , success: function (result) {
+                        if (result) {
+                            layer.alert(JSON.stringify(data), {
+                                title: '修改成功，最终的提交信息',
+                            })
+                        } else {
+                            layer.alert("修改失败")
+                        }
 
-        //修改返回
-        function editUser(data) {
-            $.ajax({
-                url: "edit"
-                , type: "post"
-                , async: false
-                , dataType: "json",
-               data:data
-                , success: function (result) {
-                    if (result){
-                        layer.alert(JSON.stringify(data), {
-                            title: '修改成功，最终的提交信息',
-                        })
-                    }else{
-                        layer.alert("修改失败")
+                        return false;
                     }
+                })
+            }
 
-                    return false;
-                }
-            })
-        }
-
-        //添加返回
+            //添加返回
             function setUser(data) {
                 $.ajax({
                     url: "add"
                     , type: "post"
                     , async: false
                     , dataType: "json",
-                    data:data
+                    data: data
                     , success: function (result) {
-                        if (result){
+                        if (result) {
                             layer.alert(JSON.stringify(data), {
                                 title: '添加成功，最终的提交信息',
                             })
-                        }else{
+                        } else {
                             layer.alert("添加失败")
                         }
                         return false;
                     }
                 })
             }
+
             //搜素框
             var $ = layui.$, active = {
                 reload: function () {
@@ -382,21 +386,23 @@
 
 </body>
 <!--弹出表-->
-<div  style="display:none;padding: 20px" id="updateDiv" >
+<div style="display:none;padding: 20px" id="updateDiv">
     <div class="layui-form" lay-filter="editForm">
         <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">用户名</label>
-            <div class="layui-input-inline">
-                <input type="text" name="userName" autocomplete="off" class="layui-input" lay-verify="required" lay-reqtext="用户名是必填项">
+            <div class="layui-inline">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="userName" autocomplete="off" class="layui-input" lay-verify="required"
+                           lay-reqtext="用户名是必填项">
+                </div>
             </div>
-        </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-inline">
                 <label class="layui-form-label">用户ID</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="userId"  autocomplete="off" class="layui-input" readonly="readonly" style="caret-color: transparent">
+                    <input type="text" name="userId" autocomplete="off" class="layui-input" readonly="readonly"
+                           style="caret-color: transparent">
                 </div>
             </div>
             <div class="layui-inline">
@@ -411,7 +417,8 @@
             <div class="layui-inline">
                 <label class="layui-form-label">手机</label>
                 <div class="layui-input-inline">
-                    <input type="tel" name="phonenumber" lay-verify="required|phone" autocomplete="off" class="layui-input">
+                    <input type="tel" name="phonenumber" lay-verify="required|phone" autocomplete="off"
+                           class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
@@ -425,7 +432,8 @@
             <div class="layui-inline">
                 <label class="layui-form-label">登录名</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="loginName"  autocomplete="off" class="layui-input" lay-verify="required" lay-reqtext="登录名是必填项">
+                    <input type="text" name="loginName" autocomplete="off" class="layui-input" lay-verify="required"
+                           lay-reqtext="登录名是必填项">
                 </div>
             </div>
             <div class="layui-inline">
@@ -437,22 +445,23 @@
             </div>
         </div>
         <div class="layui-form-item ">
-            <div class="layui-input-block" >
+            <div class="layui-input-block">
                 <button type="submit" class="layui-btn" lay-submit="" lay-filter="submitEdit">立即提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary" lay-filter="reset1">重置</button>
             </div>
         </div>
     </div>
 </div>
-<div  style="display:none;padding: 20px" id="saveDiv" >
+<div style="display:none;padding: 20px" id="saveDiv">
     <div class="layui-form" lay-filter="addForm">
         <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">用户名</label>
-            <div class="layui-input-inline">
-                <input type="text" name="userName" lay-verify="required" lay-reqtext="用户名是必填项" autocomplete="off" class="layui-input">
+            <div class="layui-inline">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="userName" lay-verify="required" lay-reqtext="用户名是必填项" autocomplete="off"
+                           class="layui-input">
+                </div>
             </div>
-        </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-inline">
@@ -467,7 +476,8 @@
             <div class="layui-inline">
                 <label class="layui-form-label">手机</label>
                 <div class="layui-input-inline">
-                    <input type="tel" name="phonenumber" lay-verify="required|phone" autocomplete="off" class="layui-input">
+                    <input type="tel" name="phonenumber" lay-verify="required|phone" autocomplete="off"
+                           class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
@@ -481,7 +491,8 @@
             <div class="layui-inline">
                 <label class="layui-form-label">登录名</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="loginName"  autocomplete="off" class="layui-input" lay-verify="required" lay-reqtext="登录名是必填项">
+                    <input type="text" name="loginName" autocomplete="off" class="layui-input" lay-verify="required"
+                           lay-reqtext="登录名是必填项">
                 </div>
             </div>
             <div class="layui-inline">
@@ -493,10 +504,11 @@
             </div>
         </div>
         <div class="layui-form-item ">
-            <div class="layui-input-block" >
+            <div class="layui-input-block">
                 <button type="submit" class="layui-btn" lay-submit="" lay-filter="submitAdd">立即提交</button>
             </div>
         </div>
     </div>
-</div>-->
+</div>
+-->
 </html>

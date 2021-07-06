@@ -11,4 +11,5 @@ public interface IRedisService {
     void remove(String key);
 
     boolean isExits(String key);
+    public void set(String key, String value,Long expire);
 }

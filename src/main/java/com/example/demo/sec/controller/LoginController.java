@@ -2,17 +2,21 @@ package com.example.demo.sec.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.demo.sec.entity.SysUser;
+import com.example.demo.sec.service.impl.RedisServiceImpl;
 import com.example.demo.sec.service.impl.SysUserServiceImpl;
 import com.example.demo.sec.service.impl.UserRegisterServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -28,6 +32,10 @@ public class LoginController {
     BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     @Autowired
     UserRegisterServiceImpl userRegisterService;
+    @Autowired
+    RedisServiceImpl redisService;
+    @Value("${redis.key.prefix.authCode}")
+    String authCode;
 
 
     @PostMapping("/index")
@@ -37,8 +45,6 @@ public class LoginController {
             model.addAttribute("msg", "用户名或密码错误");
         }
         model.addAttribute("loginName", sysUser.getLoginName());
-        System.out.println(token);
-        System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
         return "redirect:/index";
     }
 
@@ -82,12 +88,29 @@ public class LoginController {
     //验证验证码
     @GetMapping("/verifyAuthCode")
     @ResponseBody
-    public boolean verifyAuthCode(String phoneNumber, String authCode) {
+    public Map<String, String> verifyAuthCode(String phoneNumber, String authCode) {
+        final Map<String, String> map = new HashMap<>();
         if (phoneNumber == null || authCode == null) {
-            return false;
+            map.put("msg", "验证码错误");
+            return map;
         }
-        return userRegisterService.verifyAuthCode(phoneNumber, authCode);
-
+        //验证码错误次数
+        final boolean count = userRegisterService.count(phoneNumber);
+        if (count) {
+            map.put("msg", "错误次数已达3次，请重新发送");
+            return map;
+        }
+        final boolean b = userRegisterService.verifyAuthCode(phoneNumber, authCode);
+        //验证码输错3次停止验证，需要重新发送验证码
+        if (!b) {
+            map.put("msg", "验证失败");
+            return map;
+        } else {
+            //删除验证次数
+            redisService.remove(authCode + phoneNumber);
+        }
+        map.put("msg", "true");
+        return map;
     }
 
     public SysUser getUserByName(String loginName) {
