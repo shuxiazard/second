@@ -109,7 +109,7 @@
 </div>
 <script src="/assets/dist/js/jquery.min.js"></script>
 <script src="/assets/dist/js/layui.js"></script>
-<script src="/assets/dist/js/css/modules/layer/layer.js"></script>
+<script src="/assets/dist/js/layer/layer.js"></script>
 <script th:inline="javascript">
     var data1 = [[${departs}]]
     //JS
@@ -124,6 +124,7 @@
             //左侧菜单事件
             menuLeft: function (othis) {
                 layer.msg('展开左侧菜单的操作', {icon: 0});
+                console.log(othis.data())
             }
             , menuRight: function () {
                 layer.open({

@@ -50,7 +50,7 @@
             url:'/verifyAuthCode'+"?phoneNumber="+phone+"&authCode="+authCode,
             type:"get",
             success:function (data) {
-               alert(data)
+               alert(data.msg)
             }
         })
     })
@@ -61,10 +61,10 @@
            url:'/verifyAuthCode'+"?phoneNumber="+phone+"&authCode="+authCode,
            type:"get",
            success:function (data) {
-               if (data===false){
-                   alert("验证码错误");
-               }else {
+               if (data.msg===true){
                    submit.click();
+               }else {
+                  alert(data.msg)
                }
            }
        })

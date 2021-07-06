@@ -3,16 +3,15 @@ package com.example.demo.sec.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.demo.sec.entity.DepartTree;
-import com.example.demo.sec.entity.SysDept;
 import com.example.demo.sec.entity.SysUser;
+import com.example.demo.sec.service.impl.RedisServiceImpl;
+import com.example.demo.sec.service.impl.RedisTemplateObjectServiceImpl;
 import com.example.demo.sec.service.impl.SysDeptServiceImpl;
 import com.example.demo.sec.service.impl.SysUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.stereotype.Controller;
-
 import java.util.List;
 
 /**
@@ -31,11 +30,15 @@ public class SysUserController {
     SysDeptServiceImpl sysDeptService;
     @Autowired
     SysUserServiceImpl sysUserService;
+    @Autowired
+    RedisServiceImpl redisService;
+    @Autowired
+    RedisTemplateObjectServiceImpl redisTemplateObjectService;
 
     @GetMapping("/dept")
     public String  getDept(Model model) {
-        final List<SysDept> list = sysDeptService.list();
         final List<DepartTree> departRoot = getChildren( sysDeptService.getDepartRoot());
+        String key ="dept:all:";
         model.addAttribute("departs",departRoot);
         return "user";
 

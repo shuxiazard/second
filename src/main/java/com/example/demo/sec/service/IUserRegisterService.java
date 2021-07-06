@@ -6,4 +6,5 @@ public interface IUserRegisterService {
     boolean verifyAuthCode(String telephone, String authCode);
 
     boolean isExist(String telphone);
+    boolean count(String telphone);
 }

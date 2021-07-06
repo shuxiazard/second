@@ -23,6 +23,9 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
     //期望时间
     @Value("${redis.key.expire.authCode}")
     Long expire;
+    //统计验证次数
+    @Value("${redis.key.count.authCode}")
+    String count;
 
     @Override
     public String generateAuthCode(String telephone) {
@@ -54,5 +57,16 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
     @Override
     public boolean isExist(String telphone) {
         return redisService.isExits(this.authCode + telphone);
+    }
+
+    @Override
+    public boolean count(String telphone) {
+        final String s = redisService.get(count + telphone);
+        if (s == null) {
+            redisService.set(count + telphone, "1");
+            return false;
+        }
+        final Long increment = redisService.redisTemplate.opsForValue().increment(count + telphone);
+        return increment > 3;
     }
 }
