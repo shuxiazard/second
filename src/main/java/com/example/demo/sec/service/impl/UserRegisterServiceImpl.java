@@ -51,6 +51,7 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
         if (s == null) {
             return false;
         }
+
         return s.equals(authCode);
     }
 

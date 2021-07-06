@@ -3,10 +3,10 @@ package com.example.demo.sec.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.demo.sec.entity.SysUser;
 import com.example.demo.sec.service.impl.RedisServiceImpl;
-import com.example.demo.sec.service.impl.RedisTemplateObjectServiceImpl;
 import com.example.demo.sec.service.impl.SysUserServiceImpl;
 import com.example.demo.sec.service.impl.UserRegisterServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -34,6 +34,8 @@ public class LoginController {
     UserRegisterServiceImpl userRegisterService;
     @Autowired
     RedisServiceImpl redisService;
+    @Value("${redis.key.prefix.authCode}")
+    String authCode;
 
 
     @PostMapping("/index")
@@ -103,10 +105,12 @@ public class LoginController {
         if (!b) {
             map.put("msg", "验证失败");
             return map;
+        } else {
+            //删除验证次数
+            redisService.remove(authCode + phoneNumber);
         }
         map.put("msg", "true");
         return map;
-
     }
 
     public SysUser getUserByName(String loginName) {
