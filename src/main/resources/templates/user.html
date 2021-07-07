@@ -59,7 +59,7 @@
                     <dl class="layui-nav-child site-demo-button ">
                         <dd><a th:href="@{/user/dept}" id="depart">用户管理</a></dd>
                         <dd><a th:href="@{/role}">角色管理</a></dd>
-                        <dd><a id="btn">部门管理</a></dd>
+                        <dd><a th:href="@{/dept}">部门管理</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
@@ -200,6 +200,7 @@
                 ]
                 , id: 'testReload'
                 , page: true
+
             });
             //头工具栏事件
             table.on('toolbar(user)', function (obj) {

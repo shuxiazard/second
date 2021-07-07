@@ -2,6 +2,7 @@ package com.example.demo.sec.service.impl;
 
 import com.example.demo.sec.service.IRedisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class RedisServiceImpl implements IRedisService {
     }
     @Override
     public void remove(String key) {
-        redisTemplate.opsForValue().decrement(key);
+        redisTemplate.delete(key);
     }
 
     @Override
