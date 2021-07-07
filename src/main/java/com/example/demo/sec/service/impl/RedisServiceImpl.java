@@ -37,7 +37,10 @@ public class RedisServiceImpl implements IRedisService {
     public boolean expire(String key, long expire) {
         return redisTemplate.expire(key, expire, TimeUnit.SECONDS);
     }
-
+    @Override
+    public boolean expire(String key, long expire,TimeUnit timeUnit) {
+        return redisTemplate.expire(key, expire, timeUnit);
+    }
     @Override
     public void remove(String key) {
         redisTemplate.opsForValue().decrement(key);
