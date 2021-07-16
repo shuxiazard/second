@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -55,27 +56,45 @@ public class SysUserController {
     //根据部门显示员工
     @GetMapping("/table")
     @ResponseBody
-    public List<SysUser> getTableUserByDeptId(@RequestParam("deptId") Long deptId) {
-        final String allUser = redisService.get("user:deptId:all:");
-        final String partUser = redisService.get("user:deptId:part:" + deptId + ":");
+    public HashMap<String,Object> getTableUserByDeptId(
+            @RequestParam("deptId") Long deptId
+            , @RequestParam("page") Integer page
+            , @RequestParam("size") Integer size) {
+        final HashMap<String,Object> map = new HashMap<>();
+        final String allUser = redisService.get("user:deptId:"+page+":size:"+size+":");
+        final String partUser = redisService.get("user:deptId:" + deptId + ":page:"+page+":"+"size:"+size+":");
+        int count;
         if (deptId == -1) {
-            final List<SysUser> allList = sysUserService.list();
+            final List<SysUser> allList = sysUserService.getUserLimit(page,size);
+            count = sysUserService.count();
+            map.put("count",count);
             if (allUser == null) {
                 //放入redis缓存
                 final String jsonString = JSON.toJSONString(allList);
-                redisService.set("user:deptId:all:", jsonString, expire);
-                return allList;
+                redisService.set("user:deptId:"+page+":", jsonString, expire);
+               map.put("data",allList);
+            return map;
             } else {
-                return JSON.parseArray(allUser, SysUser.class);
+                final List<SysUser> sysUsers = JSON.parseArray(allUser, SysUser.class);
+                 map.put("data", sysUsers);
+                 return map;
             }
         } else if (partUser == null) {
             final QueryWrapper<SysUser> deptId1 = new QueryWrapper<SysUser>().eq("dept_id", deptId);
-            final List<SysUser> partList = sysUserService.list(deptId1);
+            final List<SysUser> partList = sysUserService.getUserLimit(deptId,page,size);
+            count = sysUserService.count(deptId1);
             final String part = JSON.toJSONString(partList);
-            redisService.set("user:deptId:part:" + deptId + ":", part, expire);
-            return partList;
+            redisService.set("user:deptId:" + deptId + ":page:"+page+":"+"size:"+size+":", part, expire);
+            map.put("count",count);
+            map.put("data",partList);
+            return map;
         } else {
-            return JSON.parseArray(partUser, SysUser.class);
+            final QueryWrapper<SysUser> deptId1 = new QueryWrapper<SysUser>().eq("dept_id", deptId);
+            count = sysUserService.count(deptId1);
+            final List<SysUser> sysUsers = JSON.parseArray(partUser, SysUser.class);
+            map.put("count",count);
+            map.put("data",sysUsers);
+            return map;
         }
     }
 
@@ -90,8 +109,7 @@ public class SysUserController {
                 final List<SysUser> list = sysUserService.list();
                 redisService.set("user:userId:" + userId + ":", JSON.toJSONString(list), expire);
                 return list;
-            }
-            else {
+            } else {
                 final QueryWrapper<SysUser> userById = new QueryWrapper<SysUser>().eq("user_id", userId);
                 final List<SysUser> list = sysUserService.list(userById);
                 redisService.set("user:userId:" + userId + ":", JSON.toJSONString(list), expire);

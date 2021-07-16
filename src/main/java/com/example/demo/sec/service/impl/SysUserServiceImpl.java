@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户信息表 服务实现类
@@ -32,6 +34,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Autowired
     JwtUtils jwtUtils;
+    @Autowired
+    SysUserMapper sysUserMapper;
     @Override
     public String login(String loginName, String password) {
         String token=null;
@@ -47,5 +51,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             throw new BadCredentialsException("密码或用户名错误");
         }
         return token;
+    }
+
+    @Override
+    public List<SysUser> getUserLimit(Integer page, Integer size) {
+        return sysUserMapper.getUserLimit((page - 1) * size, size);
+    }
+
+    @Override
+    public List<SysUser> getUserLimit(Long deptId, Integer page, Integer size) {
+        return sysUserMapper.getUserBydeptIdLimit(deptId,(page - 1) * size, size);
     }
 }
