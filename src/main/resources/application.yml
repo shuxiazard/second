@@ -6,10 +6,10 @@ jwt:
 
 spring:
   redis:
-    host: 47.111.180.28 #redis地址
+    host:  #redis地址
     database: 0 # Redis数据库索引（默认为0）
     port: 6379 # Redis服务器连接端口
-    password: 123 #默认空
+    password:  #默认空
     timeout: 5000ms # 连接超时时间
     lettuce:
       pool:
