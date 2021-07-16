@@ -101,11 +101,6 @@
         </div>
 
     </div>
-
-    <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        底部固定区域
-    </div>
 </div>
 <script src="/assets/dist/js/jquery.min.js"></script>
 <script src="/assets/dist/js/layui.js"></script>
@@ -161,23 +156,28 @@
 
     //根据部门id查找员工信息
     function userTable(deptId) {
-        var tableData = new Array(); // 用于存放表格数据
+/*      var tableData = new Array(); // 用于存放表格数据
         $.ajax({
-            url: "table?deptId=" + deptId
+            url: "table"
+            ,where:{
+                 deptId:deptId}
             , type: "get"
             , async: false
             , dataType: "json"
             , success: function (result) {
                 tableData = result;
             }
-        })
+        })*/
 
         layui.use('table', function () {
             var table = layui.table;
             var form = layui.form;
+            var count=0;
             table.render({
                 elem: '#user'
-                , data: tableData
+                ,url: "table"
+                ,where:{
+                    deptId:deptId}
                 , toolbar: '#toolbarDemo'
                 , title: '用户数据表'
                 , cols: [
@@ -199,7 +199,30 @@
                     ]
                 ]
                 , id: 'testReload'
-                , page: true
+                ,parseData: function(res){ //res 即为原始返回的数据
+                    return {
+                        "code": 0, //解析接口状态
+                        "msg": "暂无数据", //解析提示文本
+                        "count":res.count,//如果不设置，page的count将为undefined，页面不会分页
+                        "data": res.data //解析数据列表
+                    };
+                },
+                page:true
+                ,request: {
+                    pageName: 'page' //页码的参数名称，默认：page
+                    ,limitName: 'size' //每页数据量的参数名，默认：limit
+                },
+                done: function(res, curr, count){
+                    //如果是异步请求数据方式，res即为你接口返回的信息。
+                    //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                    console.log(res);
+
+                    //得到当前页码
+                    console.log(curr);
+
+                    //得到数据总量
+                    console.log(count);
+                }
 
             });
             //头工具栏事件
@@ -358,6 +381,7 @@
                             return {
                                 "code": 0
                                 , "msg": "暂无数据"
+                                ,"count":res.length
                                 , "data": res
                             }
                         }
