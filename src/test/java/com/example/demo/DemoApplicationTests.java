@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.xml.crypto.Data;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +61,7 @@ class DemoApplicationTests {
   void testLimit(){
       final List<SysUser> userLimit = sysUserService.getUserLimit(1, 100);
       userLimit.forEach(System.out::println);
+        System.out.println(LocalDate.now());
     }
 
 

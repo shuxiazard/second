@@ -3,6 +3,7 @@ package com.example.demo.sec.service.impl;
 
 import com.example.demo.component.utils.JwtUtils;
 import com.example.demo.entity.AdminDetails;
+import com.example.demo.sec.entity.SysActived;
 import com.example.demo.sec.entity.SysUser;
 import com.example.demo.sec.mapper.SysUserMapper;
 import com.example.demo.sec.service.ISysUserService;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -36,10 +38,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     JwtUtils jwtUtils;
     @Autowired
     SysUserMapper sysUserMapper;
+    @Autowired
+    SysActivedServiceImpl sysActivedService;
+
     @Override
     public String login(String loginName, String password) {
         String token=null;
         final AdminDetails userDetails = myUserDetailService.loadUserByUsername(loginName);
+        //如果用户名不存在
+        if (userDetails==null){
+            return token;
+        }
         final boolean matches = passwordEncoder.matches(password, userDetails.getPassword());
         if (matches){
             final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -47,6 +56,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             emptyContext.setAuthentication(authentication);
             SecurityContextHolder.setContext(emptyContext);
            token=jwtUtils.generalToken(userDetails.getUsername());
+
         } else {
             throw new BadCredentialsException("密码或用户名错误");
         }

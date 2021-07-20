@@ -42,6 +42,17 @@ public class RedisServiceImpl implements IRedisService {
     public boolean expire(String key, long expire,TimeUnit timeUnit) {
         return redisTemplate.expire(key, expire, timeUnit);
     }
+
+    @Override
+    public void setBit(String key, Long userId) {
+        redisTemplate.opsForValue().setBit(key,userId,true);
+    }
+
+    @Override
+    public boolean getBit(String key, Long userId) {
+        return redisTemplate.opsForValue().getBit(key,userId);
+    }
+
     @Override
     public void remove(String key) {
         redisTemplate.delete(key);
@@ -52,6 +63,8 @@ public class RedisServiceImpl implements IRedisService {
         final String s = redisTemplate.opsForValue().get(key);
         return s == null;
     }
+
+
 
 
 

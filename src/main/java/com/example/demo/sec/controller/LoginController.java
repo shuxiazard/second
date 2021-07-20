@@ -1,8 +1,10 @@
 package com.example.demo.sec.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.demo.sec.entity.SysActived;
 import com.example.demo.sec.entity.SysUser;
 import com.example.demo.sec.service.impl.RedisServiceImpl;
+import com.example.demo.sec.service.impl.SysActivedServiceImpl;
 import com.example.demo.sec.service.impl.SysUserServiceImpl;
 import com.example.demo.sec.service.impl.UserRegisterServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,15 +38,29 @@ public class LoginController {
     RedisServiceImpl redisService;
     @Value("${redis.key.prefix.authCode}")
     String authCode;
-
+    @Autowired
+    SysActivedServiceImpl sysActivedService;
 
     @PostMapping("/index")
     public String getIndex(SysUser sysUser, Model model) {
         final String token = sysUserService.login(sysUser.getLoginName(), sysUser.getPassword());
         if (token == null) {
             model.addAttribute("msg", "用户名或密码错误");
+            return "login";
         }
         model.addAttribute("loginName", sysUser.getLoginName());
+        //登录记录
+        final QueryWrapper<SysUser> qw = new QueryWrapper<>();
+        qw.eq("login_name",sysUser.getLoginName());
+        final SysUser user = sysUserService.getOne(qw);
+        SysActived sysActived = new SysActived();
+        sysActived.setUserId(user.getUserId());
+        sysActived.setLoginName(user.getLoginName());
+        sysActived.setLoginTime(LocalDate.now());
+        sysActived.setActived(1);
+        sysActivedService.save(sysActived);
+        //redis使用bitmap记录登录
+
         return "redirect:/index";
     }
 
